@@ -1,21 +1,40 @@
 import React from "react";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { ChatContext } from "../context/ChatContext";
+import { useEffect } from "react";
+import { useRef } from "react";
 
-const Message = () => {
+const Message = ({ message }) => {
+  const { currentUser } = useContext(AuthContext);
+  const { data } = useContext(ChatContext);
+
+  const ref = useRef();
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  console.log(message);
   return (
-    <div className="message owner">
+    <div
+      ref={ref}
+      className={`message ${message.senderId === currentUser.uid && "owner"}`}
+    >
       <div className="messageInfo">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYNzaPelHgrEejyS5LIOs4q6YRmPNZr8O4zA&usqp=CAU"
+          src={
+            message.senderId === currentUser.uid
+              ? currentUser.photoURL
+              : data.user.photoURL
+          }
           alt=""
         />
         <span>just now</span>
       </div>
       <div className="messageContent">
-        <p>Hello</p>
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYNzaPelHgrEejyS5LIOs4q6YRmPNZr8O4zA&usqp=CAU"
-          alt=""
-        />
+        <p>{message.text}</p>
+        {message.img && <img src={message.img} width={50} height={50} alt="" />}
       </div>
     </div>
   );
